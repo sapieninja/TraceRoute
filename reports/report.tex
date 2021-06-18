@@ -1,0 +1,72 @@
+\documentclass[11pt,twoside,a4paper]{article}
+
+% Intra-PDF Links and Bookmarks 
+\usepackage[colorlinks=true,linkcolor=black,urlcolor=blue,bookmarksopen=true]{hyperref}
+\usepackage[open,openlevel=1]{bookmark}
+
+% A4, 1.91cm margins, header+footer
+\usepackage[a4paper, margin=1.91cm, top=2.91cm, bottom=2.91cm]{geometry}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{15.2pt}
+\fancyfoot[LE,RO]{ \thepage }
+\fancyfoot[RE,LO]{ \textit{\copyright Max Bowman and Timothy Langer 2021} }
+
+% Use UTF-8 so that we can have lots of nice characters!
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+% Maths symbols and packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{gensymb}
+
+% easy way to include SI units in text
+\usepackage{siunitx}
+
+% Apply spacing in between paragraphs
+\setlength{\parskip}{1em}
+\setlength{\parindent}{0pt}
+
+% Add diagrams and images support
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{caption}
+
+% Mathematics typesetting support 
+\usepackage{commath}
+
+% Multiple columns
+\usepackage{multicol}
+
+% figure support
+\usepackage{import}
+\usepackage{xifthen}
+\pdfminorversion=7
+\usepackage{pdfpages}
+\usepackage{transparent}
+\newcommand{\incfig}[1]{%
+  \def\svgwidth{\columnwidth}
+  \import{./figures/}{#1.pdf_tex}
+}
+
+\author{Max Bowman and Timothy Langer}
+\title{Algorithm to produce GPS Art given an input image}
+\fancyhead[LE,RO]{ Algorithm to produce GPS Art given an input image }
+
+
+\pdfsuppresswarningpagegroup=1
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  \href{https://en.wikipedia.org/wiki/GPS_drawing}{GPS Art} is a popular hobby activity, in particular on social networks like \href{https://strava.com}{Strava}. This project intends to create a piece of software that would allow the user to input an image or a vector graphic and have the algorithm suggest a location to draw the given art on the map, using available streets in a city, for example.
+\end{abstract}
+
+\section{Planning}
+
+A daunting project at first, we brainstormed ideas for algorithms that would be more efficient than brute forcing every scale factor and every location possible.
+
+\end{document}
