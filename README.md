@@ -4,7 +4,7 @@
 
 ### 🏠 [Homepage](https://github.com/sapieninja/TraceRoute)
 
-## Author
+## Authors
 
 👤 **Max Bowman**
 
