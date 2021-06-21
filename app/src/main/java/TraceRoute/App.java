@@ -3,12 +3,16 @@
  */
 package TraceRoute;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import TraceRoute.osm.OpenStreetMap;
 
+import java.io.IOException;
+
+public class App {
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        try {
+            new OpenStreetMap("../maps/cyclable.osm.pbf");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
