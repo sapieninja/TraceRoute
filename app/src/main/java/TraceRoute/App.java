@@ -10,7 +10,8 @@ import java.io.IOException;
 public class App {
     public static void main(String[] args) {
         try {
-            new OpenStreetMap("../maps/cyclable.osm.pbf");
+            OpenStreetMap osm = new OpenStreetMap("../maps/cyclable.osm.pbf");
+            osm.visualiseTree();
         } catch (IOException e) {
             e.printStackTrace();
         }

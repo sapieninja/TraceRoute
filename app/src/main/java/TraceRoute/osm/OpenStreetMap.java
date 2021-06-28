@@ -172,7 +172,7 @@ public class OpenStreetMap {
     }
 
     @SuppressWarnings("unused")
-    private void visualiseTree() {
+    public void visualiseTree() {
         tree.visualize(5000, 5000).save("build/r-tree.png");
     }
 }
