@@ -7,8 +7,8 @@ y = 1
 for x in fileinput.input():
     print(y,x)
     x = x.split(",")
-    a = float(x[0])
-    b = float(x[1])
+    a = float(x[0])*20
+    b = float(x[1])*20
     drawturtle.goto(a,b)
     drawturtle.pendown()
     y += 1

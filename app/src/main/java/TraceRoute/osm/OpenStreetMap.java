@@ -36,6 +36,11 @@ public class OpenStreetMap {
      */
     private final Logger logger;
     private final Serializer<String, Geometry> serializer = Serializers.flatBuffers().utf8();
+
+    public RTree<String, Geometry> getTree() {
+        return tree;
+    }
+
     /**
      * R*-tree to store the road network
      */
