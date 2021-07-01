@@ -6,6 +6,7 @@ import com.github.davidmoten.rtree.Serializer;
 import com.github.davidmoten.rtree.Serializers;
 import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Geometry;
+import com.github.davidmoten.rtree.geometry.Rectangle;
 import com.google.common.io.Files;
 import com.wolt.osm.parallelpbf.ParallelBinaryParser;
 import com.wolt.osm.parallelpbf.entity.Node;
@@ -174,6 +175,14 @@ public class OpenStreetMap {
         tree = serializer.read(input, serialisedTree.length(), InternalStructure.DEFAULT);
 
         logger.info("Tree import complete");
+    }
+
+    /**
+     * Get a maximal bounding box for the tree
+     * @return the top-level {@link Rectangle} of the {@link RTree}
+     */
+    public Rectangle getBounds() {
+        return tree.mbr().get();
     }
 
     @SuppressWarnings("unused")
