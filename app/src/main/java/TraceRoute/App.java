@@ -8,13 +8,18 @@ import TraceRoute.ea.Route;
 import TraceRoute.osm.OpenStreetMap;
 import TraceRoute.shape.Shape;
 import com.github.davidmoten.rtree.geometry.Point;
+import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.Track;
+import io.jenetics.jpx.TrackSegment;
 
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+
 
 public class App {
     public static void main(String[] args) {
@@ -38,6 +43,14 @@ public class App {
             System.out.print("https://www.google.com/maps/dir/");
             for (Point point : optimalRoute.getPointList()) System.out.printf("%s,%s/", point.y(), point.x());
             System.out.println();
+            GPX gpx = GPX.builder().build();
+            TrackSegment track = TrackSegment.builder().build();
+            for(Point point : optimalRoute.getPointList()) {
+                track = track.toBuilder().addPoint(p->p.lon(point.x1()).lat(point.y1())).build();
+            }
+            Track segment = Track.builder().addSegment(track).build();
+            gpx = gpx.toBuilder().addTrack(segment).build();
+            GPX.write(gpx, Path.of("route.gpx"));
         } catch (IOException e) {
             e.printStackTrace();
         }

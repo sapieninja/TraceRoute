@@ -44,7 +44,7 @@ public class Conductor {
     private void generateRoute() {
         children.add(new Route(
                 shape,
-                ThreadLocalRandom.current().nextDouble(maxScaleFactor / 3, maxScaleFactor),
+                ThreadLocalRandom.current().nextDouble(maxScaleFactor / 20, maxScaleFactor),
                 new Point2D.Double(
                         ThreadLocalRandom.current().nextDouble(-0.3, 0.1),
                         ThreadLocalRandom.current().nextDouble(51.3, 51.6)

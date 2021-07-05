@@ -1,10 +1,13 @@
 package TraceRoute.fitness;
 
+import TraceRoute.ea.Route;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Geometry;
 import com.github.davidmoten.rtree.geometry.internal.LineDouble;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -12,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Fitness {
+    private static Logger logger;
     /**
      * Given the line segments p1 to p2 and p3 to p4
      * this function tells where they intersect (may be outside of the segment)
@@ -86,6 +90,7 @@ public class Fitness {
         double lon1, lat1, lon2, lat2;
         double minimum = 0.0;
         double[] location = new double[2];
+        logger = LoggerFactory.getLogger(Route.class);
         LinkedList<Point2D> pointslist = new LinkedList<>();
         while (!pathiterator.isDone()) {
             pathiterator.currentSegment(location);
@@ -133,6 +138,7 @@ public class Fitness {
                     }
                 }
             }
+            logger.info("Completed section" + pointslist.indexOf(coordinate));
             results.add(minimum);
             totaldist += minimum;
             minimum = 0.0;
