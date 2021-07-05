@@ -34,12 +34,10 @@ public class App {
             System.out.println(route);
             myReader.close();
 
-            //Fitness.Perpendicular(osm.getTree(),route);
-
             Route optimalRoute = new Conductor(new Shape(route).getPath(), osm).findOptimalRoute();
-            //System.out.print("https://www.google.com/maps/dir/");
-            for (Point point : optimalRoute.getPointList()) System.out.printf("%s,%s%n", point.y(), point.x());
-            //System.out.println();
+            System.out.print("https://www.google.com/maps/dir/");
+            for (Point point : optimalRoute.getPointList()) System.out.printf("%s,%s/", point.y(), point.x());
+            System.out.println();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -19,7 +19,5 @@ public class Shape {
         }
     }
 
-    public Path2D getPath() {
-        return path;
-    }
+    public Path2D getPath() { return path; }
 }

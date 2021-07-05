@@ -1,5 +1,6 @@
 package TraceRoute.ea;
 
+import TraceRoute.fitness.Fitness;
 import TraceRoute.osm.OpenStreetMap;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.geometry.Geometries;
@@ -60,6 +61,10 @@ public class Route {
         double[] location = new double[6];
         double x, y;
 
+        // the fitness call
+
+        fitness = Fitness.Perpendicular(map.getTree(), shape.getPathIterator(transform), center.getX(),center.getY(),scaleFactor,0.1); //Does the searching in a 100 meter range
+
         while (!iterator.isDone()) {
             iterator.currentSegment(location);
             x = location[0];
@@ -79,11 +84,6 @@ public class Route {
 
             Rectangle nearestRectangle = nearest.geometry().mbr();
             Point nearestPoint = Geometries.pointGeographic(nearestRectangle.x1(), nearestRectangle.y1());
-
-            // TODO make fitness calculation less crude
-            // rn this just subtracts the hypotenuse distance to the total "fitness" variable (so that smaller fitness = worse fit)
-            fitness -= Math.sqrt(Math.pow(nearestPoint.x() - x, 2) + Math.pow(nearestPoint.y() - y, 2)) * 1000;
-
             pointList.add(nearestPoint);
 
             iterator.next();
