@@ -91,6 +91,7 @@ public class Fitness {
         double minimum = 0.0;
         double[] location = new double[2];
         logger = LoggerFactory.getLogger(Route.class);
+        logger.info("Starting fitness calculation for " + dx + " " + dy + " " + scale);
         LinkedList<Point2D> pointslist = new LinkedList<>();
         while (!pathiterator.isDone()) {
             pathiterator.currentSegment(location);
@@ -124,7 +125,7 @@ public class Fitness {
             lat2 = y - step * gradient;
             Iterable<Entry<String, Geometry>> online = london.search(Geometries.pointGeographic(x,y),searchdist).toBlocking().toIterable();
             lines = new LinkedList<>();
-            minimum = results.stream().mapToDouble(a -> a).average().orElse(0) * 2;
+            minimum = results.stream().mapToDouble(a -> a).average().orElse(0) * 5;
             if (minimum == 0.0) minimum = 0.1;
             for (Entry part : online
             ) {
@@ -138,13 +139,14 @@ public class Fitness {
                     }
                 }
             }
-            logger.info("Completed section" + pointslist.indexOf(coordinate));
             results.add(minimum);
             totaldist += minimum;
             minimum = 0.0;
             prevx = x;
             prevy = y;
          }
-        return totaldist / scale;
+        System.out.print("=");
+        logger.info("Finished fitness calculation " + dx + " " + dy + " " + scale + " " + totaldist/scale);
+        return totaldist/scale;
     }
 }

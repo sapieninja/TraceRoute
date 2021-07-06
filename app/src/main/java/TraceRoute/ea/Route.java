@@ -16,21 +16,38 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Route {
 
     private double fitness;
+    private double scaleFactor;
+    private double X;
+    private double Y;
+    private double prevX;
+    private double prevY;
+    private double prevFitness;
+    private double prevScaleFactor;
+    private Shape shape;
+    private OpenStreetMap map;
+    private AffineTransform transform;
 
     private List<Point> pointList = new ArrayList<>();
 
     private Logger logger;
 
-    public Route(Shape shape, double scaleFactor, Point2D.Double center, OpenStreetMap map) {
-
+    public Route(Shape shape, double scaleFactor, Point2D.Double center, double prevX, double prevY, double prevScaleFactor, double prevFitness, OpenStreetMap map) {
+        X = center.getX();
+        Y = center.getY();
+        this.shape = shape;
+        this.map = map;
+        this.scaleFactor = scaleFactor;
         logger = LoggerFactory.getLogger(Route.class);
 
-        logger.info("Generating route with s.f. %s centred around %s, %s".formatted(scaleFactor, center.y, center.x));
+        //logger.info("Generating route with s.f. %s centred around %s, %s".formatted(scaleFactor, center.y, center.x));
 
         // get the center of the provided shape
         // we will translate this origin point to the provided central coords
@@ -53,18 +70,53 @@ public class Route {
 
         // sets the center as the origin point
         transform.translate(-centerX, -centerY);
-
+        this.transform = transform;
         // iterate over the shape
         PathIterator iterator = shape.getPathIterator(transform);
 
-        // the output of iterator.currentSegment is stored into this array
+        fitness = Fitness.Perpendicular(map.getTree(), shape.getPathIterator(transform), center.getY(),center.getX(),scaleFactor,0.1);
+    }
+    public List<Double> getChild(double maxDistance, double entropy)
+    {
+        //To keep things simple we only optimise one value at a time
+        int choice = ThreadLocalRandom.current().nextInt(0,3);
+        double gradient = 0.0;
+        double change = 0.0;
+        double oldX, oldY, oldSF;
+        oldX = X;
+        oldY = Y;
+        oldSF = scaleFactor;
+        switch (choice)
+        {
+            case 0: gradient = (prevFitness-fitness)/(X-prevX);
+            break;
+            case 1: gradient = (prevFitness-fitness)/(Y-prevY);
+            break;
+            case 2: gradient = (prevFitness-fitness)/(scaleFactor-prevScaleFactor);
+            break;
+        }
+        gradient *= 0.0001;
+        change = ThreadLocalRandom.current().nextDouble(-0.01*maxDistance,0.1*maxDistance)*gradient + ThreadLocalRandom.current().nextDouble(0.000000001*entropy);
+        change*=0.00000005;
+        switch (choice)
+        {
+            case 0: X = X += change;
+                break;
+            case 1: Y = Y += change;
+                break;
+            case 2: scaleFactor = scaleFactor += change;
+                break;
+        }
+        return new ArrayList<Double>(Arrays.asList(scaleFactor, X,Y,oldX,oldY,oldSF,prevFitness));
+    }
+    public double getFitness() {
+        return fitness;
+    }
+
+    public List<Point> getPointList() {
+        PathIterator iterator = shape.getPathIterator(transform);
         double[] location = new double[6];
         double x, y;
-
-        // the fitness call
-
-        fitness = Fitness.Perpendicular(map.getTree(), shape.getPathIterator(transform), center.getX(),center.getY(),scaleFactor,0.1); //Does the searching in a 100 meter range
-
         while (!iterator.isDone()) {
             iterator.currentSegment(location);
             x = location[0];
@@ -88,15 +140,7 @@ public class Route {
 
             iterator.next();
         }
-
         logger.info("Finished calculating this route. Fitness: %s".formatted(fitness));
-    }
-
-    public double getFitness() {
-        return fitness;
-    }
-
-    public List<Point> getPointList() {
         return pointList;
     }
 }

@@ -5,6 +5,7 @@ package TraceRoute;
 
 import TraceRoute.ea.Conductor;
 import TraceRoute.ea.Route;
+import TraceRoute.fitness.Fitness;
 import TraceRoute.osm.OpenStreetMap;
 import TraceRoute.shape.Shape;
 import com.github.davidmoten.rtree.geometry.Point;
@@ -12,6 +13,7 @@ import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +40,8 @@ public class App {
             }
             System.out.println(route);
             myReader.close();
-
             Route optimalRoute = new Conductor(new Shape(route).getPath(), osm).findOptimalRoute();
+
             System.out.print("https://www.google.com/maps/dir/");
             for (Point point : optimalRoute.getPointList()) System.out.printf("%s,%s/", point.y(), point.x());
             System.out.println();
