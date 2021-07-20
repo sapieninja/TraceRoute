@@ -24,7 +24,7 @@ public class Conductor {
     private LinkedList<Callable<Integer>> toRun;
 
     public Conductor(Shape shape, OpenStreetMap map) {
-        children = new ArrayList<Route>(100);
+        children = new ArrayList<Route>(1000);
         toRun = new LinkedList<Callable<Integer>>();
         childqueue = new LinkedBlockingQueue<>();
         logger = LoggerFactory.getLogger(Route.class);
@@ -39,7 +39,7 @@ public class Conductor {
                 Math.abs(mapBounds.y2() - mapBounds.y1()) / shapeBounds.getHeight()
         );
         executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             toRun.add(this::generateRoute);
         }
         try {
@@ -55,10 +55,10 @@ public class Conductor {
         if(childqueue.isEmpty()) {
             children.add(new Route(
                     shape,
-                    ThreadLocalRandom.current().nextDouble(maxScaleFactor / 10, maxScaleFactor/2),
+                    ThreadLocalRandom.current().nextDouble(maxScaleFactor / 20, maxScaleFactor/4),
                     new Point2D.Double(
-                            ThreadLocalRandom.current().nextDouble(-0.4, 0.2),
-                            ThreadLocalRandom.current().nextDouble(51.3, 51.7)
+                            ThreadLocalRandom.current().nextDouble(-0.3, 0.2),
+                            ThreadLocalRandom.current().nextDouble(51.4, 51.6)
                     ),
                     0.0,
                     0.0,
@@ -69,6 +69,7 @@ public class Conductor {
         }
         else
         {
+            logger.info(String.valueOf(childqueue.size()));
             try {
                 List<Double> child = childqueue.poll(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
@@ -92,15 +93,17 @@ public class Conductor {
     }
 
     public Route findOptimalRoute() {
+        double prevFitness;
+        children.sort(Comparator.comparing(Route::getFitness));
         try {
-            for (int x = 0; x < 20; x++) {
+            for (int x = 0; x < 200; x++) {
                 toRun = new LinkedList<Callable<Integer>>();
-                children.sort(Comparator.comparing(Route::getFitness));
                 logger.info("Beginning " + x + " Generation " + children.get(0).getFitness());
-                children = children.subList(0, 20);
-                for (int i = 0; i < 20; i++) {
+                prevFitness = children.get(0).getFitness();
+                children = children.subList(0,200);
+                for (int i = 0; i < 200; i++) {
                     for (int q = 0; q < 3; q++) {
-                        List<Double> child = children.get(i).getChild(1.0, 0.1);
+                        List<Double> child = children.get(i).getChild(1.0, 0.5);
                         if(Math.abs(child.get(0))>maxScaleFactor/2 || Math.abs(child.get(0))>maxScaleFactor/10)
                         {
                             child.set(0,maxScaleFactor/2);
@@ -108,15 +111,21 @@ public class Conductor {
                         childqueue.offer(child,Long.MAX_VALUE,TimeUnit.NANOSECONDS);
                         toRun.add(this::generateRoute);
                     }
-                    toRun.add(this::generateRoute); //Adds some new random ones to see if they are better
+                    for(int g = 0; g < 1; g++) {
+                        toRun.add(this::generateRoute); //Adds some new random ones to see if they are better
+                    }
                 }
                 try {
                     executor.invokeAll(toRun);
                     System.out.println();
                 }
-                catch (InterruptedException e)
-                {
+                catch (InterruptedException e) {
                     e.printStackTrace();
+                }
+                children.sort(Comparator.comparing(Route::getFitness));
+                if(children.get(0).getFitness() == prevFitness)
+                {
+                    break;
                 }
             }
         } catch (InterruptedException e) {

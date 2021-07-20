@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Fitness {
+    //TODO implement better fitness algorithms (maybe seeing how easy it is to pathfind between points)
     private static Logger logger;
     /**
      * Given the line segments p1 to p2 and p3 to p4
