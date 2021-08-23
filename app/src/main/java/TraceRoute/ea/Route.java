@@ -245,6 +245,7 @@ public class Route {
             pointList.add(nearestPoint);
 
             iterator.next();
+            iterator.next(); //fixes double route bug
         }
         logger.info("Finished calculating this route. Fitness: %s".formatted(fitness));
         return pointList;
